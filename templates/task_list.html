@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>My Tasks</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+        }
+
+        .navbar {
+            background: #222;
+            color: white;
+            padding: 18px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar h2 {
+            margin: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: 40px auto;
+        }
+
+        .top-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .add-btn {
+            background: #007bff;
+            color: white;
+            padding: 12px 20px;
+            text-decoration: none;
+            border-radius: 8px;
+        }
+
+        .filters {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+
+        select {
+            padding: 10px;
+            margin-right: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 10px 18px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .task-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .task-card {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .task-card h3 {
+            margin-top: 0;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+            margin: 4px;
+        }
+
+        .status {
+            background: #e7f1ff;
+            color: #0066cc;
+        }
+
+        .priority {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .empty {
+            text-align: center;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="navbar">
+
+    <h2>📋 My Task Manager</h2>
+
+    <div>
+        Welcome, {{ request.user.username }}
+    </div>
+
+</div>
+
+
+<div class="container">
+
+    <div class="top-section">
+
+        <div>
+            <h1>My Tasks</h1>
+            <p>Manage your personal tasks easily.</p>
+        </div>
+
+        <a href="{% url 'create_task' %}" class="add-btn">
+            + Add Task
+        </a>
+
+    </div>
+
+
+    <!-- FILTER SECTION -->
+
+    <div class="filters">
+
+        <form method="GET">
+
+            <select name="status">
+
+                <option value="">All Status</option>
+
+                <option value="Pending"
+                    {% if selected_status == 'Pending' %}selected{% endif %}>
+                    Pending
+                </option>
+
+                <option value="In Progress"
+                    {% if selected_status == 'In Progress' %}selected{% endif %}>
+                    In Progress
+                </option>
+
+                <option value="Completed"
+                    {% if selected_status == 'Completed' %}selected{% endif %}>
+                    Completed
+                </option>
+
+            </select>
+
+
+            <select name="priority">
+
+                <option value="">All Priority</option>
+
+                <option value="Low"
+                    {% if selected_priority == 'Low' %}selected{% endif %}>
+                    Low
+                </option>
+
+                <option value="Medium"
+                    {% if selected_priority == 'Medium' %}selected{% endif %}>
+                    Medium
+                </option>
+
+                <option value="High"
+                    {% if selected_priority == 'High' %}selected{% endif %}>
+                    High
+                </option>
+
+            </select>
+
+            <button type="submit">
+                Filter
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- TASKS -->
+
+    {% if tasks %}
+
+        <div class="task-grid">
+
+            {% for task in tasks %}
+
+                <div class="task-card">
+
+                    <h3>{{ task.title }}</h3>
+
+                    <p>
+                        {{ task.description }}
+                    </p>
+
+                    <span class="badge status">
+                        {{ task.status }}
+                    </span>
+
+                    <span class="badge priority">
+                        {{ task.priority }}
+                    </span>
+
+                    <p>
+                        📅 <strong>Due:</strong>
+                        {{ task.due_date }}
+                    </p>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="empty">
+
+            <h2>No Tasks Found</h2>
+
+            <p>
+                You don't have any tasks matching the selected filters.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>
